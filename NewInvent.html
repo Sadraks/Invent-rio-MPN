@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventário de Máquinas – Compacto</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 10px;
+        background: #f5f5f5;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 12px 15px;
+        margin: 5px 0;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        color: #fff;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    #add {
+        background: #0077cc;
+    }
+
+    #pdf {
+        background: #008b50;
+    }
+
+    /* --- LISTA NA TELA (VISUALIZAÇÃO MOBILE) --- */
+    .item {
+        background: #fff;
+        padding: 10px;
+        margin-top: 10px;
+        border-left: 4px solid #0077cc;
+        border-radius: 8px;
+    }
+
+    .nome {
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+    .campo {
+        font-size: 15px;
+    }
+
+    /* --- LAYOUT DO PDF (2 COLUNAS) --- */
+    @media print {
+        body {
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Remove o formulário da impressão */
+        .no-print {
+            display: none !important;
+        }
+
+        /* Área de impressão em duas colunas */
+        #result {
+            column-count: 2;
+            column-gap: 25px;
+            padding: 20px;
+        }
+
+        .item {
+            break-inside: avoid;
+            border: 1px solid #000;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .nome {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .campo {
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container no-print">
+    <h2>Inventário de Máquinas</h2>
+
+    <input id="nome" placeholder="Nome da máquina">
+    <input id="serie" placeholder="Série">
+    <input id="fabricante" placeholder="Fabricante">
+    <input id="galpao" placeholder="Galpão">
+
+    <button id="add">Adicionar Máquina</button>
+    <button id="pdf">Gerar PDF</button>
+
+    <hr>
+</div>
+
+<div id="result"></div>
+
+<script>
+let maquinas = [];
+
+document.getElementById("add").onclick = () => {
+    const nome = document.getElementById("nome").value.trim();
+    const serie = document.getElementById("serie").value.trim();
+    const fabricante = document.getElementById("fabricante").value.trim();
+    const galpao = document.getElementById("galpao").value.trim();
+
+    if (!nome) return alert("Coloque pelo menos o nome da máquina.");
+
+    maquinas.push({ nome, serie, fabricante, galpao });
+
+    document.getElementById("nome").value = "";
+    document.getElementById("serie").value = "";
+    document.getElementById("fabricante").value = "";
+    document.getElementById("galpao").value = "";
+
+    render();
+};
+
+function render() {
+    const div = document.getElementById("result");
+    div.innerHTML = "";
+
+    maquinas.forEach((m) => {
+        const bloco = document.createElement("div");
+        bloco.className = "item";
+
+        bloco.innerHTML = `
+            <div class="nome">${m.nome}</div>
+            <div class="campo"><b>Série:</b> ${m.serie || "—"}</div>
+            <div class="campo"><b>Fabricante:</b> ${m.fabricante || "—"}</div>
+            <div class="campo"><b>Galpão:</b> ${m.galpao || "—"}</div>
+        `;
+
+        div.appendChild(bloco);
+    });
+}
+
+document.getElementById("pdf").onclick = () => {
+    window.print();
+};
+</script>
+
+</body>
+</html>
